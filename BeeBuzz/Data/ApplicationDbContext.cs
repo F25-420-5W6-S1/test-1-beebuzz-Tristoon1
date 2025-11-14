@@ -13,6 +13,8 @@ namespace BeeBuzz.Data
         }
 
         public DbSet<Organization> Organizations { get; set; }
+
+        public DbSet<Beehive> Beehives { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

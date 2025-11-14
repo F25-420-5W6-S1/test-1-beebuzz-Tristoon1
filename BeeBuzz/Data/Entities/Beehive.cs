@@ -9,6 +9,8 @@
         public BeehiveStatus Status { get; set; }
 
         public string DeactivationReason { get; set; }
+
+        public ApplicationUser User { get; set; }
     }
 
     public enum BeehiveStatus

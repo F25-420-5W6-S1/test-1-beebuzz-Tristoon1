@@ -18,5 +18,13 @@ namespace BeeBuzz.Data.Repositories
         {
             return _db.Users.Where(user => user.Organization.OrganizationId == organizationId);
         }
+
+        public IEnumerable<Beehive> GetAllBeehivesForOrganization(string organizationId)
+        {
+            return _db.Beehives
+                .Where( beehive => 
+                    beehive.User.Organization.OrganizationId.Equals(organizationId)
+                );
+        }
     }
 }
