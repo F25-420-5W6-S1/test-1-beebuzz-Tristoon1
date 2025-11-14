@@ -11,6 +11,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultUI()
@@ -26,6 +28,8 @@ builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
 builder.Services.AddScoped<IBeehiveRepository, BeehiveRepository>();
 
 var app = builder.Build();
+
+await RunSeeding(app);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -46,4 +50,20 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapRazorPages();
+
 app.Run();
+
+
+
+async Task RunSeeding(IHost host)
+{
+    var scopeFactory = host.Services.GetService<IServiceScopeFactory>();
+
+    using (var scope = scopeFactory.CreateScope())
+    {
+        var seeder = scope.ServiceProvider.GetService<BeeBuzzSeeder>();
+
+        await seeder.Seed();
+    }
+}

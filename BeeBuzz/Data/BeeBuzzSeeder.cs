@@ -32,14 +32,14 @@ namespace BeeBuzz.Data
                 await _roleManager.CreateAsync(new IdentityRole<int>("Default"));
             }
 
-            // 4. Create an Admin user in seeding
-            ApplicationUser admin = await SeedAdminUser();
-
             if (!_db.Organizations.Any())
             {
                 // Create a 0000-0000-0000-0000 Organization, and add the admin user to it
                 Organization initialOrganization = new Organization();
                 initialOrganization.OrganizationId = "0000-0000-0000-0000";
+
+                // 4. Create an Admin user in seeding
+                ApplicationUser admin = await SeedAdminUser(initialOrganization);
 
                 initialOrganization.Users.Add(admin);
 
@@ -48,7 +48,7 @@ namespace BeeBuzz.Data
 
         }
 
-        private async Task<ApplicationUser> SeedAdminUser()
+        private async Task<ApplicationUser> SeedAdminUser(Organization organization)
         {
             const string adminRoleName = "Admin";
             const string adminUsername = "admin";
@@ -69,7 +69,8 @@ namespace BeeBuzz.Data
                 {
                     UserName = adminUsername,
                     Email = adminEmail,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    Organization = organization,
                 };
 
                 var result = await _userManager.CreateAsync(adminUser, adminPassword);
